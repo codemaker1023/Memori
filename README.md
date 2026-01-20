@@ -1,7 +1,7 @@
 [![Memori Labs](https://s3.us-east-1.amazonaws.com/images.memorilabs.ai/banner.png)](https://memorilabs.ai/)
 
 <p align="center">
-  <strong>The memory fabric for enterprise AI</strong>
+  <strong>The memory fabric for enterprise AI!!!</strong>
 </p>
 
 <p align="center">
