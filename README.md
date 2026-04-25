@@ -1,16 +1,11 @@
 [![Memori Labs](https://s3.us-east-1.amazonaws.com/images.memorilabs.ai/banner.png)](https://memorilabs.ai/)
 
 <p align="center">
-  <strong>The memory fabric for enterprise AI!!!</strong>
+  <strong>The memory fabric for enterprise AI</strong>
 </p>
 
 <p align="center">
-  <i>Memori plugs into the software and infrastructure you already use. It is LLM, datastore and framework agnostic and seamlessly integrates into the architecture you've already designed.</i>
-</p>
-<p align="center">
-  <a href="https://trendshift.io/repositories/15418">
-    <img src="https://trendshift.io/_next/image?url=https%3A%2F%2Ftrendshift.io%2Fapi%2Fbadge%2Frepositories%2F15418&w=640&q=75" alt="Memori%2fLabs%2FMemori | Trendshif">
-  </a>
+  <i>Memori adds persistent memory to your LLM applications without changing your architecture. It is model, framework, and datastore agnostic.</i>
 </p>
 
 <p align="center">
@@ -33,99 +28,34 @@
 
 <p align="center">
   <a href="https://github.com/MemoriLabs/Memori/stargazers">
-    <img src="https://img.shields.io/badge/⭐%20Give%20a%20Star-Support%20the%20project-orange?style=for-the-badge" alt="Give a Star">
+    <img src="https://img.shields.io/badge/Star%20on%20GitHub-Support%20Memori-orange?style=for-the-badge" alt="Star on GitHub">
   </a>
 </p>
 
 ---
 
-## Getting Started
+## Why Memori
 
-Install Memori:
+Memori captures LLM interactions, enriches them, and makes them retrievable as high-quality context for future generations.
+
+- **Low integration overhead**: wrap your existing LLM client and keep your current stack.
+- **Attribution-aware memory**: organize memory by `entity`, `process`, and `session`.
+- **Asynchronous augmentation**: extract structured memory without adding user-facing latency.
+- **Flexible infrastructure**: supports multiple models, frameworks, and databases.
+
+## Install
 
 ```bash
 pip install memori
 ```
 
-## What's New In v3?
-
-- Significant performance improvements using Advanced Augmentation.
-- Threaded, zero latency replacement for the v2 extraction agent.
-- LLM agnostic with support for all of the major foundational models.
-- Datastore agnostic with support for all major databases and document stores.
-- Adapter/driver architecture to make contributions easier.
-- Vectorized memories and in-memory semantic search for more accurate context.
-- Third normal form schema including storage of semantic triples for a knowledge graph.
-
-## Example with OpenAI
-
-```python
-from openai import OpenAI
-from memori import Memori
-
-client = OpenAI(...)
-mem = Memori().llm.register(client)
-```
-
-## Attribution
-
-To get the most out of Memori, you want to attribute your LLM interactions to an entity (think person, place or thing; like a user) and a process (think your agent, LLM interaction or program).
-
-If you do not provide any attribution, Memori cannot make memories for you.
-
-```python
-mem.attribution(entity_id="12345", process_id="my-ai-bot")
-```
-
-## Session Management
-
-Memori uses sessions to group your LLM interactions together. For example, if you have an agent that executes multiple steps you want those to be recorded in a single session.
-
-By default, Memori handles setting the session for you but you can start a new session or override the session by executing the following:
-
-```python
-mem.new_session()
-```
-
-or
-
-```python
-session_id = mem.config.session_id
-
-# ...
-
-mem.set_session(session_id)
-```
-
-## Suggested Setup
-
-To make sure everything is installed in the most efficient manner, we suggest you execute the following once:
+Optional one-time optimization:
 
 ```bash
 python -m memori setup
 ```
 
-This step is not necessary but will prep your environment for faster execution. If you do not perform this step, it will be executed the first time Memori is run which will cause the first execution (and only the first one) to be a little slower.
-
-## Configure Your Database
-
-1. Run this command once, via CI/CD or anytime you update Memori.
-
-    ```python
-    Memori(conn=db_session_factory).config.storage.build()
-    ```
-
-2. Instantiate Memori with the connection factory.
-
-    ```python
-    from openai import OpenAI
-    from memori import Memori
-
-    client = OpenAI(...)
-    mem = Memori(conn=db_session_factory).llm.register(client)
-    ```
-
-## Quickstart Example
+## Quickstart (OpenAI + SQLite)
 
 ```python
 import os
@@ -140,92 +70,102 @@ def get_sqlite_connection():
 
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 memori = Memori(conn=get_sqlite_connection).llm.register(client)
-memori.attribution(entity_id="123456", process_id="test-ai-agent")
+
+# Required so Memori can store contextual memory for this actor/workflow.
+memori.attribution(entity_id="user_123", process_id="assistant_demo")
 memori.config.storage.build()
 
-response = client.chat.completions.create(
+client.chat.completions.create(
     model="gpt-4.1-mini",
-    messages=[
-        {"role": "user", "content": "My favorite color is blue."}
-    ]
+    messages=[{"role": "user", "content": "My favorite color is blue."}],
 )
-print(response.choices[0].message.content + "\n")
 
-# Advanced Augmentation runs asynchronously to efficiently
-# create memories. For this example, a short lived command
-# line program, we need to wait for it to finish.
-
+# Wait for async augmentation in short-lived scripts.
 memori.augmentation.wait()
 
-# Memori stored that your favorite color is blue in SQLite.
-# Now reset everything so there's no prior context.
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-memori = Memori(conn=get_sqlite_connection).llm.register(client)
-memori.attribution(entity_id="123456", process_id="test-ai-agent")
-
 response = client.chat.completions.create(
     model="gpt-4.1-mini",
-    messages=[
-        {"role": "user", "content": "What's my favorite color?"}
-    ]
+    messages=[{"role": "user", "content": "What is my favorite color?"}],
 )
-print(response.choices[0].message.content + "\n")
+print(response.choices[0].message.content)
 ```
 
-## Supported LLM
+## Core Concepts
 
-- Anthropic
-- Bedrock
-- Gemini
-- Grok (xAI)
+### Attribution
+
+Attribution tells Memori who the interaction belongs to and what workflow produced it.
+
+```python
+memori.attribution(entity_id="user_123", process_id="support_agent")
+```
+
+If attribution is not set, memory cannot be built correctly.
+
+### Session Management
+
+Sessions group related interactions together.
+
+```python
+memori.new_session()
+```
+
+Reuse an existing session:
+
+```python
+session_id = memori.config.session_id
+memori.set_session(session_id)
+```
+
+### Schema Setup
+
+Build or migrate storage schema during deployment or after upgrades:
+
+```python
+Memori(conn=db_session_factory).config.storage.build()
+```
+
+## Supported Integrations
+
+### LLM Providers
+
 - OpenAI
+- Anthropic
+- Google Gemini
+- xAI (Grok)
+- Bedrock (via LangChain)
 
-_(unstreamed, streamed, synchronous and asynchronous)_
+Supports sync, async, streamed, and unstreamed interaction modes.
 
-## Supported Frameworks
+### Frameworks and Platforms
 
-- Agno
 - LangChain
-
-## Supported Platforms
-
+- Agno
+- Pydantic AI
 - Nebius AI Studio
 
-## Supported Database Integrations
+### Database Connection Methods
 
-- **DB API 2.0** - Direct support for any Python database driver that implements the [PEP 249 Database API Specification v2.0](https://peps.python.org/pep-0249/). This includes drivers like `psycopg`, `pymysql`, `MySQLdb`, `cx_Oracle`, `oracledb`, and `sqlite3`.
-- **Django** - Native integration with Django's ORM and database layer
 - SQLAlchemy
+- DB API 2.0 (PEP 249 drivers such as `psycopg`, `pymysql`, `sqlite3`, and others)
+- Django ORM integration
 
-## Supported Datastores
+### Datastores
 
-- [CockroachDB](https://github.com/MemoriLabs/Memori/tree/main/examples/cockroachdb) - Full example with setup instructions
-- MariaDB
-- [MongoDB](https://github.com/MemoriLabs/Memori/tree/main/examples/mongodb) - Full example with setup instructions
+- SQLite
+- PostgreSQL
 - MySQL
-- [Neon](https://github.com/MemoriLabs/Memori/tree/main/examples/neon) - Full example with setup instructions
+- MariaDB
 - Oracle
-- [PostgreSQL](https://github.com/MemoriLabs/Memori/tree/main/examples/postgres) - Full example with setup instructions
-- [SQLite](https://github.com/MemoriLabs/Memori/tree/main/examples/sqlite) - Full example with setup instructions
+- MongoDB
+- Neon
 - Supabase
+- CockroachDB
 
-## Examples
+## Advanced Augmentation
 
-For more examples and demos, check out the [Memori Cookbook](https://github.com/MemoriLabs/memori-cookbook).
-
-## Memori Advanced Augmentation
-
-Memories are tracked at several different levels:
-
-- entity: think person, place, or thing; like a user
-- process: think your agent, LLM interaction or program
-- session: the current interactions between the entity, process and the LLM
-
-[Memori's Advanced Augmentation](https://github.com/MemoriLabs/Memori/blob/main/docs/advanced-augmentation.md) enhances memories at each of these levels with:
+Memori can enrich captured conversations into structured memory such as:
 
 - attributes
 - events
@@ -236,69 +176,52 @@ Memories are tracked at several different levels:
 - rules
 - skills
 
-Memori knows who your user is, what tasks your agent handles and creates unparalleled context between the two. Augmentation occurs in the background incurring no latency.
+Augmentation runs asynchronously and is available without an account (rate limited).
 
-By default, Memori Advanced Augmentation is available without an account but rate limited. When you need increased limits, [sign up for Memori Advanced Augmentation](https://app.memorilabs.ai/signup) or execute the following:
+Get higher limits:
 
 ```bash
 python -m memori sign-up <email_address>
 ```
 
-Memori Advanced Augmentation is always free for developers!
-
-Once you've obtained an API key, simply set the following environment variable:
+Set your API key:
 
 ```bash
-export MEMORI_API_KEY=[api_key]
+export MEMORI_API_KEY=<api_key>
 ```
 
-## Managing Your Quota
-
-At any time, you can check your quota by executing the following:
+Check usage quota:
 
 ```bash
 python -m memori quota
 ```
 
-Or by checking your account at [https://memorilabs.ai/](https://memorilabs.ai/). If you have reached your IP address quota, sign up and get an API key for increased limits.
-
-If your API key exceeds its quota limits we will email you and let you know.
-
-## Command Line Interface (CLI)
-
-To use the Memori CLI, execute the following from the command line:
+## CLI
 
 ```bash
 python -m memori
 ```
 
-This will display a menu of the available options. For more information about what you can do with the Memori CLI, please reference [Command Line Interface](https://github.com/MemoriLabs/Memori/blob/main/docs/cli.md).
+See full CLI docs in [`docs/cli.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/cli.md).
+
+## Documentation and Examples
+
+- Product docs: [https://memorilabs.ai/docs](https://memorilabs.ai/docs)
+- Memori cookbook: [https://github.com/MemoriLabs/memori-cookbook](https://github.com/MemoriLabs/memori-cookbook)
+- Database examples: [https://github.com/MemoriLabs/Memori/tree/main/examples](https://github.com/MemoriLabs/Memori/tree/main/examples)
+- Architecture details: [`docs/features/architecture.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/features/architecture.md)
+- LLM support details: [`docs/features/llm.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/features/llm.md)
+- Database support details: [`docs/features/databases.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/features/databases.md)
 
 ## Contributing
 
-We welcome contributions from the community! Please see our [Contributing Guidelines](https://github.com/MemoriLabs/Memori/blob/main/CONTRIBUTING.md) for details on:
-
-- Setting up your development environment
-- Code style and standards
-- Submitting pull requests
-- Reporting issues
-
----
+Contributions are welcome. See [`CONTRIBUTING.md`](https://github.com/MemoriLabs/Memori/blob/main/CONTRIBUTING.md) for setup, standards, and PR guidance.
 
 ## Support
 
-- **Documentation**: [https://memorilabs.ai/docs](https://memorilabs.ai/docs)
-- **Discord**: [https://discord.gg/abD4eGym6v](https://discord.gg/abD4eGym6v)
-- **Issues**: [GitHub Issues](https://github.com/MemoriLabs/Memori/issues)
-
----
+- Discord: [https://discord.gg/abD4eGym6v](https://discord.gg/abD4eGym6v)
+- Issues: [https://github.com/MemoriLabs/Memori/issues](https://github.com/MemoriLabs/Memori/issues)
 
 ## License
 
-Apache 2.0 - see [LICENSE](https://github.com/MemoriLabs/Memori/blob/main/LICENSE)
-
----
-
-**Star us on GitHub** to support the project
-
-[![Star History](https://api.star-history.com/svg?repos=MemoriLabs/memori&type=date)](https://star-history.com/#MemoriLabs/memori)
+Apache 2.0. See [`LICENSE`](https://github.com/MemoriLabs/Memori/blob/main/LICENSE).
