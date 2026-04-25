@@ -1,36 +1,8 @@
-[![Memori Labs](https://s3.us-east-1.amazonaws.com/images.memorilabs.ai/banner.png)](https://memorilabs.ai/)
+# Memori
 
-<p align="center">
-  <strong>The memory fabric for enterprise AI</strong>
-</p>
+The memory fabric for enterprise AI.
 
-<p align="center">
-  <i>Memori adds persistent memory to your LLM applications without changing your architecture. It is model, framework, and datastore agnostic.</i>
-</p>
-
-<p align="center">
-  <a href="https://badge.fury.io/py/memori">
-    <img src="https://badge.fury.io/py/memori.svg" alt="PyPI version">
-  </a>
-  <a href="https://pepy.tech/projects/memori">
-    <img src="https://static.pepy.tech/badge/memori" alt="Downloads">
-  </a>
-  <a href="https://opensource.org/license/apache-2-0">
-    <img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License">
-  </a>
-  <a href="https://www.python.org/downloads/">
-    <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+">
-  </a>
-  <a href="https://discord.gg/abD4eGym6v">
-    <img src="https://img.shields.io/discord/1042405378304004156?logo=discord" alt="Discord">
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/MemoriLabs/Memori/stargazers">
-    <img src="https://img.shields.io/badge/Star%20on%20GitHub-Support%20Memori-orange?style=for-the-badge" alt="Star on GitHub">
-  </a>
-</p>
+Memori adds persistent memory to your LLM applications without changing your architecture. It is model, framework, and datastore agnostic.
 
 ---
 
@@ -38,10 +10,10 @@
 
 Memori captures LLM interactions, enriches them, and makes them retrievable as high-quality context for future generations.
 
-- **Low integration overhead**: wrap your existing LLM client and keep your current stack.
-- **Attribution-aware memory**: organize memory by `entity`, `process`, and `session`.
-- **Asynchronous augmentation**: extract structured memory without adding user-facing latency.
-- **Flexible infrastructure**: supports multiple models, frameworks, and databases.
+- Low integration overhead: wrap your existing LLM client and keep your current stack.
+- Attribution-aware memory: organize memory by `entity`, `process`, and `session`.
+- Asynchronous augmentation: extract structured memory without adding user-facing latency.
+- Flexible infrastructure: supports multiple models, frameworks, and databases.
 
 ## Install
 
@@ -202,26 +174,26 @@ python -m memori quota
 python -m memori
 ```
 
-See full CLI docs in [`docs/cli.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/cli.md).
+See full CLI docs in `docs/cli.md`.
 
 ## Documentation and Examples
 
-- Product docs: [https://memorilabs.ai/docs](https://memorilabs.ai/docs)
-- Memori cookbook: [https://github.com/MemoriLabs/memori-cookbook](https://github.com/MemoriLabs/memori-cookbook)
-- Database examples: [https://github.com/MemoriLabs/Memori/tree/main/examples](https://github.com/MemoriLabs/Memori/tree/main/examples)
-- Architecture details: [`docs/features/architecture.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/features/architecture.md)
-- LLM support details: [`docs/features/llm.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/features/llm.md)
-- Database support details: [`docs/features/databases.md`](https://github.com/MemoriLabs/Memori/blob/main/docs/features/databases.md)
+- Product docs: memorilabs.ai/docs
+- Memori cookbook: github.com/MemoriLabs/memori-cookbook
+- Database examples: github.com/MemoriLabs/Memori/tree/main/examples
+- Architecture details: docs/features/architecture.md
+- LLM support details: docs/features/llm.md
+- Database support details: docs/features/databases.md
 
 ## Contributing
 
-Contributions are welcome. See [`CONTRIBUTING.md`](https://github.com/MemoriLabs/Memori/blob/main/CONTRIBUTING.md) for setup, standards, and PR guidance.
+Contributions are welcome. See `CONTRIBUTING.md` for setup, standards, and PR guidance.
 
 ## Support
 
-- Discord: [https://discord.gg/abD4eGym6v](https://discord.gg/abD4eGym6v)
-- Issues: [https://github.com/MemoriLabs/Memori/issues](https://github.com/MemoriLabs/Memori/issues)
+- Discord: discord.gg/abD4eGym6v
+- Issues: github.com/MemoriLabs/Memori/issues
 
 ## License
 
-Apache 2.0. See [`LICENSE`](https://github.com/MemoriLabs/Memori/blob/main/LICENSE).
+Apache 2.0. See `LICENSE`.
