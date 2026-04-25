@@ -176,23 +176,9 @@ python -m memori
 
 See full CLI docs in `docs/cli.md`.
 
-## Documentation and Examples
-
-- Product docs: memorilabs.ai/docs
-- Memori cookbook: github.com/MemoriLabs/memori-cookbook
-- Database examples: github.com/MemoriLabs/Memori/tree/main/examples
-- Architecture details: docs/features/architecture.md
-- LLM support details: docs/features/llm.md
-- Database support details: docs/features/databases.md
-
 ## Contributing
 
 Contributions are welcome. See `CONTRIBUTING.md` for setup, standards, and PR guidance.
-
-## Support
-
-- Discord: discord.gg/abD4eGym6v
-- Issues: github.com/MemoriLabs/Memori/issues
 
 ## License
 
